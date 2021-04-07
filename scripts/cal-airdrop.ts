@@ -60,16 +60,21 @@ const getMigrators = async (erc20) => {
       // Just filter out exactly 1 DPI
       if (erc20 === DPI && x.value === parseUnits('1').toString() && parseInt(x.blockNumber) > ATTACK_BLOCK) {
         return acc
-      } 
+      }
       // Someone did the same thing for UNIV2_DPI in 0.01 amounts and 0.02 amounts
-      else if (erc20 === UNIV2_DPI && x.value === parseUnits('0.01').toString() && parseInt(x.blockNumber) > ATTACK_BLOCK) {
+      else if (
+        erc20 === UNIV2_DPI &&
+        x.value === parseUnits('0.01').toString() &&
+        parseInt(x.blockNumber) > ATTACK_BLOCK
+      ) {
         return acc
-      }
-      else if (erc20 === UNIV2_DPI && x.value === parseUnits('0.02').toString() && parseInt(x.blockNumber) > ATTACK_BLOCK) {
+      } else if (
+        erc20 === UNIV2_DPI &&
+        x.value === parseUnits('0.02').toString() &&
+        parseInt(x.blockNumber) > ATTACK_BLOCK
+      ) {
         return acc
-      }
-      
-      else {
+      } else {
         acc[x.from.toLowerCase()] = (acc[x.from.toLowerCase()] || ethers.constants.Zero).add(
           ethers.BigNumber.from(x.value)
         )
@@ -108,6 +113,17 @@ const main = async () => {
     }
   }, {})
 
+  const totalRefunds = Object.keys(refundsInString).reduce((acc, x) => {
+    return ethers.BigNumber.from(refundsInString[x]).add(acc)
+  }, ethers.constants.Zero)
+
+  console.log('totalRefunds', formatUnits(totalRefunds))
+
+  if (totalRefunds.gt(REFUND_SUSHI_LP)) {
+    console.log('Refund calc error')
+    return
+  }
+
   // Converting them into USD
   const dpiDepositorsUSD = Object.keys(dpiDepositors).reduce((acc, x) => {
     const usd = parseFloat(formatUnits(dpiDepositors[x])) * DPI_PRICE
@@ -134,7 +150,7 @@ const main = async () => {
   }, 0)
 
   const baskBondDistribution = Object.keys(depositorsUSD).reduce((acc, x) => {
-    return { ...acc, [x]: Math.sqrt(depositorsUSD[x]) }
+    return { ...acc, [x]: parseUnits(Math.sqrt(depositorsUSD[x]).toString()).toString() }
   }, {})
 
   console.log('totalUSD', totalUSD)
