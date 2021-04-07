@@ -12,8 +12,8 @@ const MASTERCHEF = '0xDB9daa0a50B33e4fe9d0ac16a1Df1d335F96595e'.toLowerCase()
 const MIGRATOR = '0x3ef214951fb258ef240da90d8c6305eb6d08fe63'.toLowerCase()
 
 // USD Prices
-const DPI_PRICE = 468.94
-const UNIV2_PRICE = 1991.73
+const DPI_PRICE = 447.4023
+const UNIV2_PRICE = 2092.8046328640285
 
 // Refund SUSHI prices
 const REFUND_SUSHI_LP = ethers.BigNumber.from('826588319661451497160')
